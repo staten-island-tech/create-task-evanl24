@@ -64,7 +64,6 @@
       async play () {
          
           const userChoice = choiceList.value
-          console.log(userChoice)
 
           const randomNum = function () {
             return Math.floor(Math.random() * 100);
@@ -72,7 +71,6 @@
 
           const Number = randomNum()
           const computerChoice = this.objects[Number]
-          console.log(computerChoice)
          
           this.choices.splice(0, 2)
           this.choices.push(userChoice, computerChoice)
@@ -83,7 +81,6 @@
           } else {
             const outcomeResponse = await axios.get(`https://rps101.pythonanywhere.com/api/v1/match?object_one=${userChoice}&object_two=${computerChoice}`)
             const outcomeInfo = outcomeResponse.data
-            console.log(outcomeInfo)
             
             this.winner = (outcomeInfo.winner)
             this.outcome = (outcomeInfo.outcome)
