@@ -86,6 +86,8 @@
 
           if (userChoice === computerChoice) {
             this.outcome = 'Draw!'
+            this.winner = ''
+            this.loser = ''
             this.drawCounter++
           } else {
            this.getObjects(`https://rps101.pythonanywhere.com/api/v1/match?object_one=${userChoice}&object_two=${computerChoice}`)
