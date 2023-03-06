@@ -92,13 +92,13 @@
           }
         },
 
-        displayOutcome (info, userChoice) {
+        displayOutcome (info) {
           
             this.winner = (info.winner)
             this.outcome = (info.outcome)
             this.loser = (info.loser)
 
-            if (userChoice === this.winner) {
+            if (this.userChoice === this.winner) {
               this.winCounter++
             } else {
               this.lossCounter++
