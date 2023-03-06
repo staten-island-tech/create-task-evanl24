@@ -14,7 +14,7 @@
   </div>
 
   <div class="outcome">
-    <p v-if="choices[1]"> AI chose {{ choices[1] }}</p>
+    <p v-if="computerChoice"> AI chose {{ computerChoice }}</p>
     <p> {{ winner }} {{ outcome }} {{ loser }} </p>
     <p class="winner" v-if="winner"> {{ winner }} wins!</p>   
   </div>
@@ -42,60 +42,71 @@
     data() {
       return {
         objects: [],
-        choices: [],
         winner: '',
         outcome: '',
         loser: '',
         winCounter: 0,
         lossCounter: 0,
         drawCounter: 0,
+        userChoice: '',
+        computerChoice: '',
       };
     },
     methods: {
-      async getObjects () {
-         const response = await axios.get('https://rps101.pythonanywhere.com/api/v1/objects/all')
+      async getObjects (key) {
+         const response = await axios.get(key)
          const info = response.data
-      
-        info.forEach(object => {
+
+         if (Array.isArray(info) === true) {
+          info.forEach(object => {
           this.objects.push(object)
-        });
+          });
+         } else {
+          this.displayOutcome(info)
+         }
+      
+        
       },
 
-      async play () {
-         
-          const userChoice = choiceList.value
+      play () {
+
+          this.userChoice = choiceList.value
 
           const randomNum = function () {
             return Math.floor(Math.random() * 100);
           }
 
           const Number = randomNum()
-          const computerChoice = this.objects[Number]
-         
-          this.choices.splice(0, 2)
-          this.choices.push(userChoice, computerChoice)
+          this.computerChoice = this.objects[Number]
+
+          this.getOutcome(this.userChoice, this.computerChoice)
+        },
+
+        async getOutcome (userChoice, computerChoice) {
 
           if (userChoice === computerChoice) {
             this.outcome = 'Draw!'
             this.drawCounter++
           } else {
-            const outcomeResponse = await axios.get(`https://rps101.pythonanywhere.com/api/v1/match?object_one=${userChoice}&object_two=${computerChoice}`)
-            const outcomeInfo = outcomeResponse.data
-            
-            this.winner = (outcomeInfo.winner)
-            this.outcome = (outcomeInfo.outcome)
-            this.loser = (outcomeInfo.loser)
+           this.getObjects(`https://rps101.pythonanywhere.com/api/v1/match?object_one=${userChoice}&object_two=${computerChoice}`)
+          }
+        },
+
+        displayOutcome (info, userChoice) {
+          
+            this.winner = (info.winner)
+            this.outcome = (info.outcome)
+            this.loser = (info.loser)
 
             if (userChoice === this.winner) {
               this.winCounter++
             } else {
               this.lossCounter++
             }
-          }
         }
     },
     beforeMount () {
-      this.getObjects()
+      this.getObjects('https://rps101.pythonanywhere.com/api/v1/objects/all')
     }
   }
   
